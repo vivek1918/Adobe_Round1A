@@ -1,0 +1,911 @@
+{
+  "title": "Multilingual Representations and Models for\nImproved Low-Resource Language Processing",
+  "outline": [
+    {
+      "level": "H2",
+      "text": "Multilingual Representations and Models forImproved Low-Resource Language Processing",
+      "page": 1,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "vorgelegt vonMasoud Jalili Sabetaus Tehran",
+      "page": 1,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Erstgutachter: Prof. Dr. Hinrich SchützeZweitgutachter: Prof. Dr. Andy WayDrittgutachter: Prof. Dr. Ehsan Shareghi",
+      "page": 2,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Eidesstattliche Versicherung",
+      "page": 3,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Abstract",
+      "page": 5,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Zusammenfassung",
+      "page": 7,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Chapter 2 corresponds to the following publication:",
+      "page": 9,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Chapter 3 corresponds to the following publication:",
+      "page": 9,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Chapter 4 corresponds to the following publication:",
+      "page": 10,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Chapter 5 corresponds to the following publication:",
+      "page": 10,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Chapter 6 corresponds to the following publication:",
+      "page": 10,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "I conceived of the original idea of using subword tokenization for word alignmentand implemented a proof-of-concept using a new subword tokenization model",
+      "page": 10,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Introduction",
+      "page": 14,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Bibliography",
+      "page": 14,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Everyone enjoyed the food. I cooked pasta.Sentences",
+      "page": 20,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Everyone enjoyed the food . I...Words",
+      "page": 20,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "E v e r y...Characters",
+      "page": 20,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "69 118 101 114 121...Bytes",
+      "page": 20,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "KleidgehengingRichter",
+      "page": 24,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "GesetzKlage",
+      "page": 24,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "AnzugKleidgehenging",
+      "page": 24,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Mapping Approach",
+      "page": 24,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Joint Learning",
+      "page": 26,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "l(f)i ) consists of two sentences that are",
+      "page": 26,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "h(i) = σh(W(u)e(i) + W(h)h(i−1) + b(h))(1.11)",
+      "page": 28,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "y(i) = σy(W(y)h(i) + b(y))(1.12)",
+      "page": 28,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Transformer Models",
+      "page": 29,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "b) Multi-Head Attentionc) Transformer EncoderBlock",
+      "page": 30,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "M = AVO = LayerNorm1(M + X)",
+      "page": 30,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "F = ReLU(OW(f1) + b(f1))W(f2) + b(f2)",
+      "page": 30,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Z = LayerNorm2(F + O),",
+      "page": 30,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "W(f1) ∈Rd×df; W(f2) ∈Rdf×d; b(f1) ∈Rdf; b(f2) ∈Rd),(1.16)",
+      "page": 31,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Joint Training",
+      "page": 33,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Ski excursions are excellent .",
+      "page": 35,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "|A|, recall = |A ∩S|",
+      "page": 35,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "AER = 1 −|A ∩S| + |A ∩P|",
+      "page": 35,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "F1 = 2 precision × recall",
+      "page": 35,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "SimAlign: High Quality WordAlignments Without ParallelTraining Data Using Static andContextualized Embeddings",
+      "page": 39,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Pingvin Nils Olav Norvegiya qiroli tomonidan ritsar edi",
+      "page": 40,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "1 if maxPlel=0 Alj, Plfl=0 Ail=",
+      "page": 41,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "0 if minPlel=0 Alj, Plfl=0 Ail>",
+      "page": 41,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "(i = arg maxlSl,j) ∧(j = arg maxlSi,l)",
+      "page": 41,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Pi,j = 1 −κ (i/le −j/lf)2 ,",
+      "page": 42,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "where Shik:=Sik/ Plfm=1 Sim, and Svkj:=",
+      "page": 42,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "EmbeddingsAlignmentsGold Standard",
+      "page": 43,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Convert using a heuristic",
+      "page": 43,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 3: Subword alignments are always converted toword alignments for evaluation.",
+      "page": 43,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "|A|, rec = |A ∩S|",
+      "page": 43,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "F1 = 2 prec rec",
+      "page": 43,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "GoldGold St.ParallelParallelWikipediaLang.StandardSize|S||P \\ S|DataData SizeSize",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Prior Work",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "This Work",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "fastText - Argmax.70.30.60.40.50.50.77.22.49.52.47.53mBERT[8] - Argmax.87.13.79.21.67.33.94.06.54.47.64.36XLM-R[8] - Argmax.87.13.79.21.70.30.93.06.59.41.70.",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "fastText - Argmax.58.42.56.44.09.91.73.26.04.96.43.58mBERT[8] - Argmax.86.14.81.19.67.33.94.06.55.45.65.35XLM-R[8] - Argmax.87.13.81.19.71.29.93.07.61.39.71.",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 4: Word alignment performance across layersof mBERT (top) and XLM-R (bottom). Results are F1with Argmax at the subword level.",
+      "page": 44,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 4: Itermax with different number of iterations(nmax) and different α. Results are at the word level.",
+      "page": 45,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 5: Analysis of Null and Distortion Extensions.All alignments are obtained at word-level. Best resultper embedding type and method in bold.",
+      "page": 46,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "ADJ ADP ADV AUX NOUN PRON VERB",
+      "page": 46,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 6: Alignment performance (F1) on ENG-DEUfor POS. We use mBERT[8](Argmax) and Eﬂomaltrained on 1.9M parallel sentences on the word level.",
+      "page": 46,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 7: Example alignment of auxiliary verbs. Samesetting as in Table 6. Solid lines: mBERT’s alignment,identical to the gold standard. Dashed lines: eﬂomal’sincorrect alignment.",
+      "page": 47,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Acknowledgments",
+      "page": 48,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "References",
+      "page": 48,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "I. Dan Melamed. 2000. Models of translation equiv-alence among words.Computational Linguistics,26(2).",
+      "page": 50,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "ENG-CESENG-DEUENG-FASENG-FRAENG-HINENG-RONMethodPrec.Rec.F1 AERPrec.Rec.F1 AERPrec.Rec.F1 AERPrec.Rec. F1 AERPrec.Rec.F1 AERPrec.Rec.F1 AER",
+      "page": 52,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 7: Comparison of word and subword levels. Best overall result per column in bold.",
+      "page": 52,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 8: Comparison of methods for inducing align-ments from similarity matrices.All results aresubword-level. Best result per embedding type acrosscolumns in bold.",
+      "page": 52,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "BHyperparameters",
+      "page": 52,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 9: Comparison of symmetrization methods at the word level. Best result across rows per method in bold.",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "ArgmaxMatch",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "CReproducibility Information",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "C.1Computing Infrastructures, Runtimes,Number of Parameters",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "fast-align4GIZA++18eﬂomal5mBERT[8] - Argmax15XLM-R[8] - Argmax",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 12: Runtime (average across 5 runs) in secondsfor each method to align 500 parallel sentences.",
+      "page": 53,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "SystemParameterValue",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "mBERT,XLM-RCode: Huggingface TransformerVersion 2.3.1Maximum Sequence Length",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Code URLhttps://github.com/clab/fast alignGit Hash7c2bbca3d5d61ba4b0f634f098c4fcf63c1373e1Flags-d -o -v",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Code URLhttps://github.com/artetxem/vecmap.gitGit Hashb82246f6c249633039f67fa6156e51d852bd73a3Manual Vocabulary Cutoff",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 10: Overview on hyperparameters. We only list parameters where we do not use default values. Shown arethe values which we use unless speciﬁcally indicated otherwise.",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 11: Overview of datasets. “Lang.” uses ISO 639-3 language codes.",
+      "page": 54,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "herauspicken",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "harmonisierten",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "ofharmonized",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "rulesgoverningintellectual",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "isnotunique",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 11: More examples.",
+      "page": 55,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 12: More examples.",
+      "page": 56,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 13: More examples.",
+      "page": 56,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "ParCourE: A Parallel CorpusExplorer for a MassivelyMultilingual Corpus",
+      "page": 57,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "While ≈7000 languages are spoken (Eberhard et al.,",
+      "page": 58,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 3: LEXICON view example: for the Englishword “confusion”, there are ﬁve frequent translations inGerman. “Unordnung” literally means “disorder” and“Verwirrung” means “bewilderment”.",
+      "page": 60,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 1: PBC corpus statistics",
+      "page": 61,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Presentation",
+      "page": 62,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "HTMLJavascript",
+      "page": 62,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "User Interaction",
+      "page": 62,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Multiparallel",
+      "page": 62,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "CorpusEflomalSimAlign",
+      "page": 62,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 5: Use case 1, lexical differentiation. French“femme” has two different translations in English(“wife” and “woman”) whereas German also conﬂatesthe two different meanings.",
+      "page": 63,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 7: Use case 3, word order variation. The En-glish order is demonstrative, numeral, noun whereasSwahili has noun, demonstrative, numeral.",
+      "page": 63,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 8: Use case 4, grammatical markers. In contrastto English, Seychelles Creole does not inﬂect verbs fortense and uses the past tense marker “ti” instead.",
+      "page": 63,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "MethodRuntime",
+      "page": 64,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 2:Runtime in seconds for each part of thepipeline to initiate a ParCourE instance on a corpuswith 4 languages and 31K parallel sentences.",
+      "page": 64,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Graph Algorithms for MultiparallelWord Alignment",
+      "page": 69,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "arXiv:2109.06283v1 [cs.CL] 13 Sep",
+      "page": 70,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "We publish our code1 and data.",
+      "page": 71,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "subject to T, V ⩾",
+      "page": 73,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "I515151can5151see1 151515ich5 15151kann1 515es51sehen15151je5 15151vois15151",
+      "page": 73,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 2: An example of how the original matrix isﬁlled for a sentence in three languages. Zero entriesare left blank for readability.",
+      "page": 73,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "A multiparallel sentence annotated with bilingualword alignments can be considered to be a graphwith words from all translations as nodes and the",
+      "page": 73,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "ENG-DEUEuroParl-baseda508ENG-FAS(Tavakoli and Faili, 2014)400ENG-HINWPT2005b90ENG-RONWPT2005b203a www-i6.informatik.rwth-aachen.de/goldAlignment/b http://web.eecs.umich.edu/~mihalcea/wpt05/",
+      "page": 75,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 1: Overview of datasets. We use ISO 639-3 language codes. # Sentences: the number of available verses(i.e., sentences). FIN-HEB and FIN-GRC datasets split into train, validation and test.",
+      "page": 75,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 2: PBC corpus statistics",
+      "page": 75,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Init SimAlign",
+      "page": 76,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 3: F1 of MPWA for the target language pairFIN-HEB as a function of the number of additional lan-guages. There is a clear rise initially. The curve ﬂattensaround 75.",
+      "page": 77,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "3.1Effect of number of languages",
+      "page": 77,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "3.2Size of the training set",
+      "page": 77,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 4: Word alignment F1 on ENG-FRA as a func-tion of the size of the training set, ranging from 30K to6.4M training sentence pairs",
+      "page": 77,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "NMF (target languages)0.8300.7490.7870.213NMF (other languages)0.8370.7530.7930.",
+      "page": 78,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Matrix factorization techniques for recommendersystems. Computer, 42(8):30–37.",
+      "page": 80,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "I. Dan Melamed. 1998. Manual annotation of transla-tional equivalence: The blinker project. CoRR, cmp-lg/9805005.",
+      "page": 80,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "APipeline Details",
+      "page": 81,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 6: The pipeline for NMF alignments",
+      "page": 81,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 7: The pipeline for AdAd and WAdAd align-ments",
+      "page": 82,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "arXiv:1811.00066v1 [cs.CL] 31 Oct",
+      "page": 84,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "• high similarity to one target embedding",
+      "page": 85,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "• low similarity to other target embeddings",
+      "page": 85,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "p(tj|si, t) =e1τ cos(clwe(si),clwe(tj))Pj′ e1τ cos(clwe(si),clwe(tj′))(1)",
+      "page": 85,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "p(tj|si, t) =e1τ cos[clwe(si)+a(i),clwe(tj)+a(j)]Pj′ e1τ cos[clwe(si)+a(i),clwe(tj′)+a(j′)]",
+      "page": 85,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "2[lret(s, t) + lret(t, s)]",
+      "page": 85,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 2: Alignment precision, recall and F1 as a func-tion of corpus size.",
+      "page": 86,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "5Use case: Aligning the UDHR",
+      "page": 86,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 3: Similarity matrices before (left) and after (right) ﬁne-tuning. Red dots: our alignment (intersection).White squares: sure gold alignments. Empty white squares: possible gold alignments.",
+      "page": 87,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "I Dan Melamed. 1998. Manual annotation of transla-tional equivalence: The Blinker project. Technicalreport, University of Pennsylvania Institute for Re-search in Cognitive Science.",
+      "page": 89,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Subword Sampling for LowResource Word Alignment",
+      "page": 91,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "arXiv:2012.11657v2 [cs.CL] 15 Jun",
+      "page": 92,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "|S|, F1 = 2 prec rec",
+      "page": 93,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Table 1: Details on gold standards and training data. |S| is the number of sure edges in the gold standard and|P \\ S| the number of additional possible edges.",
+      "page": 94,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "selected vocabulary sizes up to the current iteration",
+      "page": 94,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Algorithm 1: Iterative subword sampling",
+      "page": 94,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "ξi, λ = argminξi,λ−f(Φpq, S, y, ξ, λ);",
+      "page": 94,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "BPE merging steps",
+      "page": 95,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Number of sentences affected",
+      "page": 95,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "by the new merging step",
+      "page": 95,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 1: An example of English BPE on a collectionof 10000 sentences. This diagram shows that with in-troducing new merging steps how many sentences aregoing to be affected .",
+      "page": 95,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "6Subword sampling in other languages",
+      "page": 95,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Language pair",
+      "page": 96,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Selected subword vocabulary sizes for each language pair in Bayesian optimization",
+      "page": 96,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 3: The space of Φpq that is explored in the Bayesianoptimization in the ﬁrst 3 iterations. The exploring steps arecolored with their alignment F1 scores.",
+      "page": 96,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "merging steps",
+      "page": 96,
+      "type": "text"
+    },
+    {
+      "level": "H3",
+      "text": "Figure 4: An example of the space Φpq forEnglish and German and the selected cellsby the Bayesian optimization.",
+      "page": 96,
+      "type": "text"
+    },
+    {
+      "level": "H1",
+      "text": "Acknowledgment",
+      "page": 99,
+      "type": "text"
+    },
+    {
+      "level": "H2",
+      "text": "Processing, pages 632–642, Lisbon, Portugal. Association for ComputationalLinguistics.",
+      "page": 104,
+      "type": "text"
+    }
+  ]
+}
