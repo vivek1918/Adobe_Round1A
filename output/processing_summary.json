@@ -1,7 +1,7 @@
 {
-  "success": 1,
+  "success": 10,
   "failed": 0,
-  "total": 1,
-  "total_time": 25.2339129447937,
-  "avg_time": 25.2339129447937
+  "total": 10,
+  "total_time": 6.353715658187866,
+  "avg_time": 0.6353715658187866
 }
