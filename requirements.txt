@@ -8,3 +8,7 @@ pytesseract
 langdetect
 transformers
 fitz==1.23.21
+torch 
+datasets 
+sentencepiece 
+pandas

@@ -1,8 +1,18 @@
 import fitz
 import re
 from typing import List, Dict, Optional
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import RandomForestClassifier
+import joblib
 
 class PDFProcessingUtils:
+    def __init__(self):
+        self.heading_model = None
+        try:
+            self.heading_model = joblib.load('heading_classifier.joblib')
+            self.vectorizer = joblib.load('tfidf_vectorizer.joblib')
+        except:
+            self.heading_model = None
     def classify_pdf_type(self, doc: fitz.Document) -> str:
         """Enhanced PDF type classification with better scanned PDF detection"""
         text_pages = 0
@@ -190,53 +200,30 @@ class PDFProcessingUtils:
                 })
         return results
 
-    def determine_heading_level(self, text: str, block=None) -> Optional[str]:
-        """Determine heading level using heuristic rules"""
-        if len(text) > 200 or len(text.split()) > 15:
-            return None
+    def determine_heading_level_ml(self, text: str, block=None) -> Optional[str]:
+        """Machine learning based heading level detection"""
+        if not self.heading_model or len(text) > 500:
+            return self.determine_heading_level(text, block)  # Fallback to heuristic
             
-        patterns = {
-            'H1': [r'^[IVX]+\.', r'^Chapter \d+', r'^[A-Z][A-Z\s]{10,}$'],
-            'H2': [r'^\d+\.\d+', r'^[A-Z][a-z]+:', r'^[A-Z][a-z]+\s[A-Z][a-z]+$'],
-            'H3': [r'^\d+\.\d+\.\d+', r'^[a-z]\)', r'^•\s']
+        features = {
+            'text_length': len(text),
+            'word_count': len(text.split()),
+            'line_count': text.count('\n') + 1,
+            'uppercase_ratio': sum(1 for c in text if c.isupper()) / len(text),
+            'ends_with_punct': int(text.strip()[-1] in {':', ';'}),
+            'has_number': int(any(c.isdigit() for c in text)),
+            'font_size': block[3] - block[1] if block and len(block) >= 4 else 12
         }
         
-        for level, regex_list in patterns.items():
-            if any(re.search(pattern, text) for pattern in regex_list):
-                return level
-                
-        if block and len(block) >= 4:
-            font_size = block[3] - block[1]
-            if font_size > 14:
-                return "H2"
-        return None
-
-    def determine_heading_level_from_layout(self, text: str, layout_block) -> Optional[str]:
-        """Determine heading level using layout information"""
-        if len(text) > 200 or len(text.split()) > 20:
-            return None
+        # Vectorize text
+        text_features = self.vectorizer.transform([text])
         
-        block_type = layout_block.type.lower()
-        block_height = layout_block.block.y_2 - layout_block.block.y_1
+        # Combine all features
+        import numpy as np
+        X = np.hstack([
+            text_features.toarray(),
+            np.array([[features[k] for k in sorted(features.keys())]])
+        ])
         
-        if block_type == "title":
-            return "H1"
-        
-        patterns = {
-            'H1': [r'^[A-Z][A-Za-z\s]{10,}$', r'^(Abstract|Introduction|Conclusion|References?)\b'],
-            'H2': [r'^[1-9]\.\s+[A-Z]', r'^Chapter\s+\d+', r'^\d+\.\d+\s+[A-Z]'],
-            'H3': [r'^\d+\.\d+\.\d+\s+[A-Z]', r'^[A-Z][a-z]+:', r'^(Figure|Table)\s+\d+']
-        }
-        
-        for level, regex_list in patterns.items():
-            for pattern in regex_list:
-                if re.match(pattern, text, re.IGNORECASE):
-                    return level
-        
-        if block_height > 25:
-            return "H1"
-        elif block_height > 15:
-            return "H2"
-        elif len(text.split()) <= 10:
-            return "H3"
-        return None
+        prediction = self.heading_model.predict(X)
+        return f"H{prediction[0]}" if prediction[0] in {1, 2, 3} else None

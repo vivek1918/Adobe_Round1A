@@ -25,7 +25,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="torch.functional")
 
 class EnhancedPDFToOutline:
-    def __init__(self, use_ml=False, use_ocr=True):
+    def __init__(self, use_ml=False, use_ocr=True, language_detector=None, ocr_processor=None):
         self.min_confidence = 0.5
         self.title = None
         self.outline = []
@@ -35,9 +35,9 @@ class EnhancedPDFToOutline:
         self.min_text_length = 15
         
         # Initialize components
-        self.language_detector = PDFLanguageDetector()
+        self.language_detector = language_detector if language_detector else PDFLanguageDetector()
         self.ml_models = PDFMLModels(use_ml=use_ml)
-        self.ocr_processor = PDFOCRProcessor()
+        self.ocr_processor = ocr_processor if ocr_processor else PDFOCRProcessor()
         self.pdf_utils = PDFProcessingUtils()
         self.utils = PDFUtils()
         
@@ -46,7 +46,6 @@ class EnhancedPDFToOutline:
     
     @staticmethod
     def _process_page_worker(pdf_path: str, job_info, detector):
-
         task_type = job_info[0]
         page_num = job_info[1]
 
@@ -79,7 +78,6 @@ class EnhancedPDFToOutline:
         except Exception as e:
             print(f"Error processing page {page_num + 1}: {e}")
             return []
-
 
     def convert_pdf(self, pdf_path: str) -> Dict[str, any]:
         """Convert PDF to structured outline with enhanced processing and multiprocessing"""
@@ -116,8 +114,6 @@ class EnhancedPDFToOutline:
                     except Exception as e:
                         print(f"Failed to process page {page_num + 1}: {str(e)}")
 
-            from functools import partial
-            # Create a partial function with pdf_path and detector
             worker_func = partial(
                 EnhancedPDFToOutline._process_page_worker,
                 pdf_path,
@@ -128,7 +124,6 @@ class EnhancedPDFToOutline:
                 futures = [executor.submit(worker_func, job) for job in page_jobs]
                 results = [f.result() for f in futures]
 
-            
             for result in results:
                 if result:
                     self.outline.extend(result)
