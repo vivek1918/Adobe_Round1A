@@ -7,3 +7,4 @@ Pillow==10.3.0
 pytesseract 
 langdetect
 transformers
+fitz==1.23.21

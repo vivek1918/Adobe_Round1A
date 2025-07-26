@@ -15,12 +15,14 @@ from multiprocessing import Pool, cpu_count
 os.environ["IOPATH_CACHE_DIR"] = os.path.join(os.getcwd(), "iopath_cache")
 import layoutparser as lp
 import torch
-
 from language_detection import PDFLanguageDetector
 from ml_models import PDFMLModels
 from ocr_processing import PDFOCRProcessor
 from pdf_processing import PDFProcessingUtils
 from utils import PDFUtils
+from functools import partial
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="torch.functional")
 
 class EnhancedPDFToOutline:
     def __init__(self, use_ml=False, use_ocr=True):
@@ -41,71 +43,105 @@ class EnhancedPDFToOutline:
         
         self.ml_model = self.ml_models.ml_model
         self.layout_model = self.ml_models.layout_model
+    
+    @staticmethod
+    def _process_page_worker(pdf_path: str, job_info, detector):
+
+        task_type = job_info[0]
+        page_num = job_info[1]
+
+        try:
+            doc = fitz.open(pdf_path)
+            page = doc[page_num]
+            text = ""
+
+            if task_type == "native":
+                text = page.get_text().strip()
+            elif task_type == "ocr":
+                img = job_info[2]
+                if img is not None:
+                    text = pytesseract.image_to_string(img)
+
+            if len(text.strip()) == 0:
+                return []
+
+            # Detect language using passed-in detector
+            language = detector.detect_language(text)
+
+            return [{
+                "level": "H2",  # placeholder for now
+                "text": text.strip(),
+                "page": page_num + 1,
+                "type": "text",
+                "language": language
+            }]
+
+        except Exception as e:
+            print(f"Error processing page {page_num + 1}: {e}")
+            return []
+
 
     def convert_pdf(self, pdf_path: str) -> Dict[str, any]:
-        """Convert PDF to structured outline with enhanced processing"""
+        """Convert PDF to structured outline with enhanced processing and multiprocessing"""
+        import multiprocessing
         start_time = time.time()
-        
+
         try:
             doc = fitz.open(pdf_path)
             pdf_type = self.pdf_utils.classify_pdf_type(doc)
             print(f"PDF Type detected: {pdf_type}")
-            
             self.pdf_utils.extract_title(doc, self)
-            
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = []
-                
-                for page_num in range(len(doc)):
-                    page = doc[page_num]
-                    text = page.get_text().strip()
-                    
-                    if pdf_type == "Native PDF" or (pdf_type == "Mixed PDF" and len(page.get_text().strip()) > 100):
-                        # Process as native PDF
-                        futures.append(executor.submit(
-                            self.pdf_utils.process_native_page, self, page, page_num + 1
-                        ))
-                    elif self.use_ocr and pdf_type in ["Scanned PDF", "Mixed PDF"]:
-                        # Convert page to image for OCR processing
-                        try:
-                            pix = page.get_pixmap(dpi=200)
-                            img_data = pix.samples
-                            img = np.frombuffer(img_data, dtype=np.uint8).reshape(
-                                pix.height, pix.width, pix.n
-                            )
-                            
-                            # Convert RGBA to RGB if necessary
-                            if img.shape[2] == 4:
-                                img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
-                            elif img.shape[2] == 1:
-                                img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-                                
-                            futures.append(executor.submit(
-                                self.ocr_processor.process_scanned_page, self, img, page_num + 1
-                            ))
-                            pix = None  # Free memory
-                        except Exception as e:
-                            print(f"Failed to process page {page_num + 1} as image: {str(e)}")
-                            continue
-                
-                # Collect results
-                for future in concurrent.futures.as_completed(futures):
+
+            page_jobs = []
+
+            for page_num in range(len(doc)):
+                page = doc[page_num]
+                text = page.get_text().strip()
+
+                if pdf_type == "Native PDF" or (pdf_type == "Mixed PDF" and len(text) > 100):
+                    page_jobs.append(("native", page_num))
+                elif self.use_ocr and pdf_type in ["Scanned PDF", "Mixed PDF"]:
                     try:
-                        result = future.result()
-                        self.outline.extend(result)
+                        pix = page.get_pixmap(dpi=200)
+                        img_data = pix.samples
+                        img = np.frombuffer(img_data, dtype=np.uint8).reshape(
+                            pix.height, pix.width, pix.n
+                        )
+                        if img.shape[2] == 4:
+                            img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
+                        elif img.shape[2] == 1:
+                            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+                        page_jobs.append(("ocr", page_num, img))
+                        pix = None
                     except Exception as e:
-                        print(f"Error processing page: {str(e)}")
-                        continue
-                        
-            doc.close()
+                        print(f"Failed to process page {page_num + 1}: {str(e)}")
+
+            from functools import partial
+            # Create a partial function with pdf_path and detector
+            worker_func = partial(
+                EnhancedPDFToOutline._process_page_worker,
+                pdf_path,
+                detector=self.language_detector
+            )
+
+            with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+                futures = [executor.submit(worker_func, job) for job in page_jobs]
+                results = [f.result() for f in futures]
+
             
+            for result in results:
+                if result:
+                    self.outline.extend(result)
+
+            doc.close()
+
             return {
                 "title": self.title or os.path.basename(pdf_path),
                 "outline": self.utils.clean_outline(self.outline),
                 "pdf_type": pdf_type,
                 "processing_time": time.time() - start_time
             }
-            
+
         except Exception as e:
             return {
                 "title": os.path.basename(pdf_path),
