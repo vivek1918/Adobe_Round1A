@@ -18,6 +18,9 @@ from sklearn.pipeline import Pipeline
 os.environ["IOPATH_CACHE_DIR"] = os.path.join(os.getcwd(), "iopath_cache")
 import layoutparser as lp
 import torch
+from langdetect import detect, DetectorFactory, lang_detect_exception
+from langdetect.lang_detect_exception import LangDetectException
+from transformers import pipeline, AutoModelForSequenceClassification, AutoTokenizer  # For fallback
 
 class EnhancedPDFToOutline:
     def __init__(self, use_ml=False, use_ocr=True):
@@ -31,6 +34,30 @@ class EnhancedPDFToOutline:
         self.layout_model = None
         self._initialize_ml_model()
         self._initialize_layout_model()
+        self._initialize_language_detector()
+        self.min_text_length = 15
+
+    def _initialize_language_detector(self):
+        """Initialize langdetect with reproducible results"""
+        DetectorFactory.seed = 42  # For consistent results
+        DetectorFactory.load_all_profiles()
+
+    def detect_language(self, text: str) -> str:
+        """
+        Pure statistical language detection using langdetect
+        No rules or whitelists - just what langdetect returns
+        """
+        if not text or len(text.strip()) < self.min_text_length:
+            return "unknown"
+        
+        try:
+            # Let langdetect handle everything statistically
+            return detect(text)
+        except LangDetectException:
+            return "unknown"
+        except Exception as e:
+            print(f"Language detection error: {str(e)}")
+            return "unknown"
 
     def _initialize_ml_model(self):
         """Improved ML model using TF-IDF and RandomForest"""
@@ -403,14 +430,33 @@ class EnhancedPDFToOutline:
                 
             level = self._determine_heading_level(text, block)
             if level:
+                language = self.detect_language(text)
                 results.append({
                     "level": level,
                     "text": text,
                     "page": page_num,
-                    "type": "text"
+                    "type": "text",
+                    "language": language
                 })
                 
         return results
+    
+    def _is_meaningful_text(self, text: str) -> bool:
+        """
+        Minimal validation to filter complete gibberish
+        (Not language specific, just basic sanity checks)
+        """
+        if not text or len(text) < 5:
+            return False
+        
+        # Check for reasonable word lengths
+        words = text.split()
+        if not words:
+            return False
+            
+        # Count words with reasonable length
+        valid_words = sum(1 for word in words if 2 <= len(word) <= 25)
+        return valid_words / len(words) > 0.5
 
     def _process_scanned_page(self, page_image: np.ndarray, page_num: int) -> List[Dict]:
         """Enhanced scanned page processing"""
@@ -438,11 +484,13 @@ class EnhancedPDFToOutline:
                         if text and len(text.strip()) > 2:
                             level = self._determine_heading_level_from_layout(text, block)
                             if level:
+                                language = self.detect_language(text)
                                 results.append({
                                     "level": level,
                                     "text": text,
                                     "page": page_num,
-                                    "type": block.type.lower()
+                                    "type": block.type.lower(),
+                                    "language": language
                                 })
             except Exception as e:
                 print(f"Layout processing failed for page {page_num}: {str(e)}")
@@ -512,11 +560,13 @@ class EnhancedPDFToOutline:
                 if refined_level:
                     level = refined_level
                 
+                language = self.detect_language(text)
                 results.append({
                     "level": level,
                     "text": text,
                     "page": page_num,
-                    "type": "text"
+                    "type": "text",
+                    "language": language
                 })
         
         return results
@@ -532,11 +582,12 @@ class EnhancedPDFToOutline:
             
             self._extract_title(doc)
             
-            with ThreadPoolExecutor(max_workers=4) as executor:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = []
                 
                 for page_num in range(len(doc)):
                     page = doc[page_num]
+                    text = page.get_text().strip()
                     
                     if pdf_type == "Native PDF" or (pdf_type == "Mixed PDF" and len(page.get_text().strip()) > 100):
                         # Process as native PDF
@@ -593,22 +644,29 @@ class EnhancedPDFToOutline:
                 "error": str(e)
             }
 
-    def _process_page(self, page, page_num):
-        """Process a single page using layout analysis"""
-        blocks = page.get_text("blocks")
+    def _process_page(self, page_content: str, page_num: int) -> List[Dict]:
+        """
+        Process page content with pure statistical approaches:
+        - langdetect for language
+        - No rule-based heading detection
+        """
+        if not page_content:
+            return []
+
+        # Simple paragraph splitting
+        paragraphs = [p.strip() for p in page_content.split('\n') if p.strip()]
         results = []
-        for block in blocks:
-            text = self._clean_text(block[4])
-            if not text:
+        
+        for text in paragraphs:
+            if not self._is_meaningful_text(text):
                 continue
-            level = self._determine_heading_level(text, block)
-            if level:
-                results.append({
-                    "level": level,
-                    "text": text,
-                    "page": page_num,
-                    "type": "text"
-                })
+                
+            results.append({
+                "text": text,
+                "page": page_num,
+                "language": self.detect_language(text)
+            })
+            
         return results
 
     def _extract_figures_with_ocr(self, pdf_path: str):
@@ -628,19 +686,23 @@ class EnhancedPDFToOutline:
         table_pattern = re.compile(r'(Table\s*\d+)[:\s]*(.*?)(?=\n|$)', re.IGNORECASE)
 
         for match in figure_pattern.finditer(text):
+            language = self.detect_language(match.group(2))
             self.outline.append({
                 "level": "H4",
                 "text": f"{match.group(1)}: {match.group(2).strip()}",
                 "page": page_num,
-                "type": "figure"
+                "type": "figure",
+                "language": language
             })
 
         for match in table_pattern.finditer(text):
+            language = self.detect_language(match.group(2))
             self.outline.append({
                 "level": "H4",
                 "text": f"{match.group(1)}: {match.group(2).strip()}",
                 "page": page_num,
-                "type": "table"
+                "type": "table",
+                "language": language
             })
 
     def _clean_text(self, text: str) -> str:

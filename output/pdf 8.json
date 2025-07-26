@@ -1,0 +1,6 @@
+{
+  "title": "pdf 8.pdf",
+  "outline": [],
+  "pdf_type": "Error",
+  "error": "'PDFProcessingUtils' object has no attribute 'extract_title'"
+}
