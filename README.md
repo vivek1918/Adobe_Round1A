@@ -13,7 +13,6 @@ This is a Dockerized PDF processing application that performs various operations
 
 ## Installation
 
-```bash
 # Clone the repository
 git clone https://github.com/vivek1918/Adobe_Round1A.git
 cd Adobe_Round1A
@@ -45,12 +44,12 @@ AYEDOBI/
 └── utils.py               # Utility functions
 
 
-#Configuration
+## Configuration
 Modify the following files as needed:
 Dockerfile - To change build configurations
 requirements.txt - To update Python dependencies
 
-#Notes
+## Notes
 The application expects PDF files in the mounted input directory
 Processed files will be saved to the mounted output directory
 The PubLayNet_model directory should contain the trained layout analysis model
