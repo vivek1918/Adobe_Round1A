@@ -21,6 +21,11 @@ from ocr_processing import PDFOCRProcessor
 from pdf_processing import PDFProcessingUtils
 from utils import PDFUtils
 from functools import partial
+import os
+import torch
+if not torch.cuda.is_available():
+    torch.set_default_device("cpu")  # Silences "CUDA not available" warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Disables tokenizer fork warnings
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="torch.functional")
 

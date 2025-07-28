@@ -7,6 +7,11 @@ import multiprocessing
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 from language_detection import PDFLanguageDetector
+import torch
+if not torch.cuda.is_available():
+    torch.set_default_device("cpu")  # Silences "CUDA not available" warnings
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Disables tokenizer fork warnings
 
 class PDFOCRProcessor:
     def __init__(self, language_detector: Optional[PDFLanguageDetector] = None):

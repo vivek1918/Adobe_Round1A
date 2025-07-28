@@ -1,0 +1,10 @@
+__pycache__/
+venv/
+.git/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.ipynb_checkpoints/
+output/
+iopath_cache/

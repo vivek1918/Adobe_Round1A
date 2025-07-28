@@ -6,6 +6,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pdf_outline_converter import EnhancedPDFToOutline
 from language_detection import PDFLanguageDetector
 from ocr_processing import PDFOCRProcessor
+os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Disable GPU
+import torch
+torch.set_default_tensor_type(torch.FloatTensor)  # Force CPU
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+import torch
+if not torch.cuda.is_available():
+    torch.set_default_device("cpu")
+    torch.backends.cudnn.enabled = False
 
 class PDFBatchProcessor:
     def __init__(self, input_dir: str, output_dir: str):

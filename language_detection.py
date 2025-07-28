@@ -8,6 +8,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from collections import defaultdict
 import time
+import os
+import torch
+if not torch.cuda.is_available():
+    torch.set_default_device("cpu")  # Silences "CUDA not available" warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Disables tokenizer fork warnings
 
 class PDFLanguageDetector:
     def __init__(self, min_text_length: int = 15, use_quantized: bool = True):

@@ -1,8 +1,14 @@
 import fitz
 import re
 from typing import List, Dict, Optional
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Disables tokenizer fork warnings
+import torch
+if not torch.cuda.is_available():
+    torch.set_default_device("cpu")  # Silences "CUDA not available" warnings
 
 class PDFProcessingUtils:
+    
     def classify_pdf_type(self, doc: fitz.Document) -> str:
         """Enhanced PDF type classification with better scanned PDF detection"""
         text_pages = 0

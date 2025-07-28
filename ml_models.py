@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 import layoutparser as lp
 import torch
+import os
 
 class PDFMLModels:
     def __init__(self, use_ml=False):
@@ -40,8 +41,8 @@ class PDFMLModels:
         """Initialize LayoutParser model for document layout analysis"""
         try:
             self.layout_model = lp.Detectron2LayoutModel(
-                config_path="C:/Users/Vivek Vasani/OneDrive/Desktop/AyeDobi/PubLayNet_model/config.yml",
-                model_path="C:/Users/Vivek Vasani/OneDrive/Desktop/AyeDobi/PubLayNet_model/model_final.pth",
+                config_path="/app/PubLayNet_model/config.yml",
+                model_path="/app/PubLayNet_model/model_final.pth",
                 label_map={0: "Text", 1: "Title", 2: "List", 3: "Table", 4: "Figure"},
                 extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", self.min_confidence],
                 device="cuda" if torch.cuda.is_available() else "cpu"
