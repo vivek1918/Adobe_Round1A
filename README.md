@@ -24,6 +24,7 @@ docker build -t pdf-processing-app .
 Run the application with Docker, mounting your input and output directories: docker run -v "/path/to/your/input:/app/input" -v "/path/to/your/output:/app/output" pdf-processing-app
 Replace /path/to/your/input and /path/to/your/output with your local directories containing input PDFs and where you want output to be saved.
 
+```bash
 #Project Structure
 AYEDOBI/
 ├── input/                  # Directory for input PDF files
@@ -43,6 +44,7 @@ AYEDOBI/
 ├── requirements.txt       # Python dependencies
 └── utils.py               # Utility functions
 
+```
 
 ## Configuration
 Modify the following files as needed:
