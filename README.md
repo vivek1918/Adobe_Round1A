@@ -1,4 +1,4 @@
-#PDF Processing Application
+**PDF Processing Application**
 #Overview
 This is a Dockerized PDF processing application that performs various operations on PDF documents including OCR, layout analysis, and content extraction.
 
