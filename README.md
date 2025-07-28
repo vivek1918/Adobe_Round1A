@@ -1,16 +1,26 @@
-**PDF Processing Application**
-#Overview
+# PDF Processing Application
+
+## Overview
 This is a Dockerized PDF processing application that performs various operations on PDF documents including OCR, layout analysis, and content extraction.
 
-#Prerequisites
-Docker installed on your system
+---
 
-Git (for cloning the repository)
+## Prerequisites
+- Docker installed on your system  
+- Git (for cloning the repository)
 
-#Installation
-Clone the repository: git clone https://github.com/vivek1918/Adobe_Round1A.git
+---
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/vivek1918/Adobe_Round1A.git
 cd Adobe_Round1A
-Build the Docker image: docker build -t pdf-processing-app .
+
+# Build the Docker image
+docker build -t pdf-processing-app .
+
 #Usage
 Run the application with Docker, mounting your input and output directories: docker run -v "/path/to/your/input:/app/input" -v "/path/to/your/output:/app/output" pdf-processing-app
 Replace /path/to/your/input and /path/to/your/output with your local directories containing input PDFs and where you want output to be saved.
